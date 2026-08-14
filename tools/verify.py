@@ -35,7 +35,6 @@ import capacity
 import deepgram
 import dialogue
 import duty
-import granola
 import harvest
 import index as index_mod
 import intake as intake_mod
@@ -1612,7 +1611,7 @@ def main() -> int:
                      "work/programs/p/questions/q2.md": fresh_question.replace("{i}", "2"),
                      "raw/meetings/2026-07-24-m.md":
                         "---\ntype: meeting\ndate: 2026-07-24\ncontainer: work/programs/p\n"
-                        "source: granola\nsource_ref: m\n---\n\n# m"})
+                        "source: plaud\nsource_ref: m\n---\n\n# m"})
         got_lines = attention.build_lines(store_mod.load(root, "work").notes, DRIFT_CONF,
                                           TODAY, store_mod.load(root, "raw").notes)
         if any("анализ без действия" in line.text for line in got_lines):
@@ -1672,7 +1671,7 @@ def main() -> int:
         root = Path(tmp)
         build(root, {"raw/meetings/2026-07-24-m.md":
                      "---\ntype: meeting\ndate: 2026-07-24\ncontainer: work/programs/p\n"
-                     "source: granola\nsource_ref: m\n---\n\n# m"})
+                     "source: plaud\nsource_ref: m\n---\n\n# m"})
         got_lines = attention.build_lines([], OUT_CONF, TODAY,
                                           store_mod.load(root, "raw").notes, None,
                                           log_entries=[], now=NOW)
@@ -4984,100 +4983,7 @@ def main() -> int:
         welcomes.append(("оглавление зоны приёма — не запись, строки нет",
                          "Неразобрано" not in text, text))
 
-    # --- коннектор Granola: повтор не должен становиться второй копией ---
-    # Двадцать четыре копии одного интервью в складе появились ровно потому, что
-    # внешний писатель не умел узнавать уже записанное. Проверяется узнавание, а
-    # не запись: запись без узнавания и есть тот отказ.
     connectors: list[tuple[str, bool, str]] = []
-    NOTE = {"id": "not_0AZokaj4znulrZ",
-            "title": "Process mapping and documentation framework — Альфа"}
-
-    connectors.append(("запись с тем же id Granola уже в складе — повтор, не берём",
-                       granola.is_known(NOTE, {"not_0AZokaj4znulrZ"}), "по id"))
-    connectors.append(("ранняя запись ссылалась названием, а не id — тоже повтор",
-                       granola.is_known({"id": "not_x", "title": "Process mapping — Альфа"},
-                                        {"Granola: Process mapping — Альфа"}),
-                       "по старому виду ссылки"))
-    connectors.append(("незнакомого разговора в складе нет — берём",
-                       not granola.is_known(NOTE, {"not_qCLEly3DAANMbf"}), "разные id"))
-
-    # 7 августа две встречи 6 августа пришли второй раз: коннектор называет
-    # разговор «not_…», а записи, заведённые руками из ссылки, — «granola:<uuid>».
-    UUID_NOTE = {"id": "not_cJDzFNKBPiIoK3", "title": "Business process overview",
-                 "web_url": "https://notes.granola.ai/d/7617f751-c176-454f-ac63-23b65a8acc24"}
-    connectors.append(("тот же разговор под другим видом ключа — повтор, не берём",
-                       granola.is_known(
-                           UUID_NOTE,
-                           {"granola:7617f751-c176-454f-ac63-23b65a8acc24"}),
-                       "по идентификатору из ссылки"))
-    # 8 августа в 09:02 расписание завело две копии встреч 6 августа — хотя
-    # сверка по адресу заметки была написана в 03:31. Причина: в списке заметок
-    # `web_url` не приходит, он есть только в подробностях, и сверка на первом
-    # шаге видела лишь id и название. Значит одной сверки мало по устройству API.
-    LIST_NOTE = {"id": "not_cJDzFNKBPiIoK3", "title": "Business process overview"}
-    connectors.append(("в списке заметок адреса нет — по нему сверить нельзя",
-                       not granola.is_known(
-                           LIST_NOTE,
-                           {"granola:7617f751-c176-454f-ac63-23b65a8acc24"}),
-                       "первая сверка знает только id и название"))
-    connectors.append(("подробности приносят адрес — там повтор и ловится",
-                       granola.is_known(
-                           dict(LIST_NOTE, web_url="https://notes.granola.ai/d/"
-                                "7617f751-c176-454f-ac63-23b65a8acc24"),
-                           {"granola:7617f751-c176-454f-ac63-23b65a8acc24"}),
-                       "вторая сверка перед записью"))
-
-    connectors.append(("чужой разговор с похожим адресом повтором не считается",
-                       not granola.is_known(
-                           UUID_NOTE,
-                           {"granola:52182ff0-54ad-4ba5-94fb-704602acde12"}),
-                       "разные идентификаторы"))
-
-    with tempfile.TemporaryDirectory() as tmp:
-        root = Path(tmp)
-        build(root, {"raw/meetings/2026-08-06-vstrecha.md":
-                     "---\ntype: meeting\ndate: 2026-08-06\ntitle: \"Встреча\"\n"
-                     "source: Granola\n"
-                     "source_ref: \"granola:7617f751-c176-454f-ac63-23b65a8acc24\"\n"
-                     "---\n\n# Встреча"})
-        было = granola.ROOT
-        granola.ROOT = root
-        try:
-            refs = granola.known_refs()
-        finally:
-            granola.ROOT = было
-        connectors.append(("источник с большой буквы читается как тот же источник",
-                           "7617f751-c176-454f-ac63-23b65a8acc24" in refs,
-                           f"нашлось {sorted(refs)[:3]}"))
-        connectors.append(("запись, заведённая руками, узнаётся коннектором",
-                           granola.is_known(UUID_NOTE, refs), "сверка по ссылке"))
-
-    with tempfile.TemporaryDirectory() as tmp:
-        root = Path(tmp)
-        build(root, {"raw/inbox/2026-07-24-vstrecha.md":
-                        "---\ntype: meeting\ndate: 2026-07-24\ntitle: \"Встреча\"\n"
-                        "source: granola\nsource_ref: \"not_0AZokaj4znulrZ\"\n---\n\n# Встреча"})
-        было = granola.ROOT
-        granola.ROOT = root
-        try:
-            refs = granola.known_refs()
-        finally:
-            granola.ROOT = было
-        connectors.append(("склад прочитан — id записанного разговора найден",
-                           "not_0AZokaj4znulrZ" in refs, f"нашлось {refs}"))
-
-    text = granola.render_transcript(
-        [{"speaker": {"attribution": "me"}, "text": "Первое."},
-         {"speaker": {"attribution": "me"}, "text": "И сразу второе."},
-         {"speaker": {"attribution": "them"}, "text": "Ответ."}], "Владелец")
-    connectors.append(("подряд идущие реплики одного голоса склеены в абзац",
-                       text.count("**Владелец:**") == 1 and "Первое. И сразу второе." in text,
-                       text))
-
-    slug = granola.slugify("ТБР-350 анализ наличия товаров")
-    connectors.append(("кириллица в названии даёт латинское имя файла по схеме",
-                       lint.EVENT_NAME.match(f"2026-03-02-{slug}.md") is not None, slug))
-
 
     # --- общий приём внешних записей: tools/capture.py ---
     with tempfile.TemporaryDirectory() as tmp:

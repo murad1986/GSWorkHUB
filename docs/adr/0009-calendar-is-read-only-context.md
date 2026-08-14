@@ -4,7 +4,6 @@
 - Дата: 2026-08-09
 - Задача: TASK-14
 - Уточняет: [0008-intervention-engine.md](0008-intervention-engine.md)
-- Развито: [0012-autonomous-ticktick-calendar-sync.md](0012-autonomous-ticktick-calendar-sync.md)
 
 ## Контекст
 

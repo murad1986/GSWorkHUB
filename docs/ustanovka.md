@@ -94,24 +94,16 @@ ACTION=check`.
 **Deepgram — расшифровка голосовых.** Ключ проекта в `DEEPGRAM_API_KEY`. Без
 него голосовое сохранится в `raw/inbox/` как файл и будет ждать расшифровки.
 
-**TickTick — задачи и сроки.** `TICKTICK_CLIENT_ID` и `TICKTICK_CLIENT_SECRET`
-берутся в кабинете разработчика TickTick; остальные поля файл заполнит сам после
-первой авторизации. Проверка: `make ticktick IMPORT=1`.
-
 **Google Calendar — контекст дня.** Календарь читается, а не управляется:
 события приходят в `raw/inbox/` как контекст. Проверка: `make calendar`.
-
-**Granola — записи встреч.** Работает только на том Mac, где стоит приложение.
-Проверка: `make granola SINCE=2026-08-01`.
 
 **Plaud, переписка, документы, доски — через агента.** Своего коннектора у них
 нет: данные приносит агент своими MCP-серверами и передаёт в общий вход
 `make capture`. Как устроено — [connector-plaud.md](./connector-plaud.md).
 
-Всё вместе и постоянно — `make sources WATCH=1`; на macOS то же самое ставится
-службой один раз: `make local-sync ACTION=install`. Полный обход вместе с
-источниками агента — `make context`, расписание на три захода в сутки —
-[avtosbor-konteksta.md](./avtosbor-konteksta.md).
+Календарь в фоне на macOS ставится службой один раз: `make local-sync
+ACTION=install`. Полный обход вместе с источниками агента — `make context`,
+расписание на три захода в сутки — [avtosbor-konteksta.md](./avtosbor-konteksta.md).
 
 **Развернуть всё сразу и собрать историю.** Готовый промпт агенту —
 [prompts/razvorachivanie.md](./prompts/razvorachivanie.md): семь шагов от

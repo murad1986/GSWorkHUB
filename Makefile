@@ -33,9 +33,6 @@ capture: ## принять внешние записи из JSON (make capture F
 context: ## полный обход внешних источников агентом (make context [DRY=1])
 	@tools/context_sweep.sh $(if $(DRY),--dry-run)
 
-granola: ## забрать новые встречи Granola в зону приёма (make granola SINCE=2026-07-01)
-	PYTHONPATH=tools $(PY) tools/granola.py $(if $(SINCE),--since $(SINCE))
-
 reflect: ## самоанализ: работает ли система (make reflect TOUCHES=1 — одной строкой о заходах)
 	$(PY) tools/reflect.py $(if $(TOUCHES),--touches)
 
@@ -45,16 +42,10 @@ touch: ## отметить состоявшийся заход (make touch KIND=
 harvest: ## что ещё есть в закрытой работе (make harvest ITEM=… | DAYS=7)
 	@PYTHONPATH=tools $(PY) tools/harvest.py $(if $(ITEM),--item $(ITEM)) $(if $(DAYS),--days $(DAYS))
 
-ticktick: ## обмен с TickTick: принять внешнее (IMPORT=1) или завести (APPLY=1)
-	@PYTHONPATH=tools $(PY) tools/ticktick.py $(if $(IMPORT),--capture) $(if $(APPLY),--apply)
-
 calendar: ## принять новые и изменённые события календаря в raw/inbox
 	@PYTHONPATH=tools $(PY) tools/agenda.py $(if $(DAYS),--days $(DAYS))
 
-sources: ## автономно сверить склад, TickTick и календарь (WATCH=1 — постоянно)
-	@PYTHONPATH=tools $(PY) tools/source_sync.py $(if $(DAYS),--days $(DAYS)) $(if $(WATCH),--watch) $(if $(INTERVAL),--interval $(INTERVAL))
-
-local-sync: ## локальная автосверка macOS (ACTION=install|start|stop|status)
+local-sync: ## фоновый приём календаря на macOS (ACTION=install|start|stop|status)
 	@PYTHONPATH=tools $(PY) tools/local_sync.py $(or $(ACTION),status) $(if $(INTERVAL),--interval $(INTERVAL))
 
 advice: ## история советов роли (make advice KIND=coach LIST=1 | KIND=coach TYPE=… ITEM=… CONTEXT=… BASIS=… TEXT=…)
@@ -81,4 +72,4 @@ lint: ## склад соответствует схеме
 verify: ## проверки ловят то, ради чего написаны
 	PYTHONPATH=tools $(PY) tools/verify.py
 
-.PHONY: gates capture context sync check-env lint verify attention index reflect touch advice ticktick calendar sources local-sync harvest track brief capacity policy intervene welcome today work granola telegram
+.PHONY: gates capture context sync check-env lint verify attention index reflect touch advice calendar local-sync harvest track brief capacity policy intervene welcome today work telegram

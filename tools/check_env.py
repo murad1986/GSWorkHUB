@@ -72,16 +72,6 @@ def main() -> int:
         ready.append(line("PyYAML", False, "pip install -r requirements.txt"))
 
     print("\nВНЕШНИЕ ДОСТУПЫ")
-    granola = bool(os.environ.get("GRANOLA_API_KEY", "").strip())
-    if not granola and command("security"):
-        got = subprocess.run(
-            ["security", "find-generic-password", "-s", "granola-api", "-w"],
-            capture_output=True, text=True)
-        granola = got.returncode == 0
-        line("Granola", granola, "ключ из Keychain — на сервере не будет")
-    else:
-        line("Granola", granola, "переменная GRANOLA_API_KEY")
-
     gws = command("gws")
     if gws:
         got = subprocess.run(["gws", "auth", "status"], capture_output=True,
@@ -94,30 +84,6 @@ def main() -> int:
              else "gws есть, но доступ не подтверждён")
     else:
         line("Календарь (gws)", False, "команда gws не установлена")
-
-    ticktick_api = os.environ.get("TICKTICK_API_TOKEN", "").strip()
-    ticktick_token = os.environ.get("TICKTICK_ACCESS_TOKEN", "").strip()
-    ticktick = Path.home() / ".config/ticktick-mcp/config.json"
-    if ticktick_api:
-        line("TickTick", True, "постоянный TICKTICK_API_TOKEN")
-    elif ticktick_token:
-        refresh = all(os.environ.get(name, "").strip() for name in (
-            "TICKTICK_REFRESH_TOKEN", "TICKTICK_CLIENT_ID", "TICKTICK_CLIENT_SECRET"))
-        detail = ("OAuth с автоматическим обновлением" if refresh
-                  else "access token без подтверждённого обновления")
-        line("TickTick", True, detail)
-    elif ticktick.is_file():
-        try:
-            data = json.loads(ticktick.read_text(encoding="utf-8"))
-            present = bool(data.get("api_token") or data.get("access_token"))
-            detail = ("постоянный API token" if data.get("api_token")
-                      else "ключ без refresh_token — истекает 13.10.2026")
-            line("TickTick", present, detail)
-        except (OSError, json.JSONDecodeError) as exc:
-            line("TickTick", False, f"файл доступа не прочитан: {exc}")
-    else:
-        line("TickTick", False,
-             f"нет TICKTICK_API_TOKEN, TICKTICK_ACCESS_TOKEN и файла {ticktick}")
 
     line("Telegram", bool(os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()),
          "переменная TELEGRAM_BOT_TOKEN")

@@ -70,9 +70,7 @@ make index && make lint
 |---|---|---|
 | Telegram — разговорный вход и голос | токен бота от `@BotFather` в `TELEGRAM_BOT_TOKEN`, числовой id владельца в `TELEGRAM_ALLOWED_USER_ID` | `make telegram ACTION=check` |
 | Расшифровка голоса | `DEEPGRAM_API_KEY` | приходит с первым голосовым |
-| Задачи и сроки | `TICKTICK_CLIENT_ID`, `TICKTICK_CLIENT_SECRET` | `make ticktick IMPORT=1` |
 | Календарь | доступ Google | `make calendar` |
-| Записи встреч на этом Mac | приложение Granola | `make granola SINCE=<дата>` |
 
 Затем — источники, доступные только через MCP. Перечисли, что есть:
 

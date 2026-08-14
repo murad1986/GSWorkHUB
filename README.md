@@ -72,12 +72,10 @@ make work ACTION=finish ITEM=work/clients/alfa/commitments/sobrat-kartu-processo
 |---|---|---|
 | Разговорный вход и голос | `make telegram ACTION=check` | токен бота, id владельца |
 | Расшифровка голоса | внутри telegram-входа | ключ Deepgram |
-| Задачи и сроки | `make ticktick IMPORT=1` / `APPLY=1` | доступ TickTick |
 | События календаря | `make calendar` | доступ Google Calendar |
-| Записи встреч | `make granola` | приложение Granola на этом Mac |
 | Диктофон, переписка, документы | `make capture FILE=…` | агент с MCP — см. [connector-plaud.md](docs/connector-plaud.md) |
 | Полный обход, 3 раза в сутки | `make context` | [avtosbor-konteksta.md](docs/avtosbor-konteksta.md) |
-| Свои коннекторы, постоянно | `make sources WATCH=1` | то, что подключено |
+| Календарь в фоне на macOS | `make local-sync ACTION=install` | доступ Google Calendar |
 
 `make check-env` показывает, что на этой машине есть, а чего нет. Ключи кладутся
 в `config/secrets.env` (образец — `config/secrets.env.example`); файл в git не
@@ -110,9 +108,11 @@ make verify     # проверки не вакуумны
   несёт человеку.
 - [docs/ustanovka.md](docs/ustanovka.md) — первый день: что заполнить и что
   подключить.
-- [docs/prompts/razvorachivanie.md](docs/prompts/razvorachivanie.md) — готовый
-  промпт агенту: развернуть систему, подключить интеграции и собрать в неё весь
-  текущий контекст за семь шагов.
+- [docs/prompts/start.md](docs/prompts/start.md) — промпт на одну вставку в
+  агента: сам заберёт систему, проверит, спросит недостающее, соберёт контекст и
+  поставит автосбор.
+- [docs/prompts/razvorachivanie.md](docs/prompts/razvorachivanie.md) — то же
+  подробнее, шагами, с остановкой после каждого.
 - [docs/storage-schema.md](docs/storage-schema.md) — именование, типы, поля,
   проверки.
 - [docs/architecture-v3.md](docs/architecture-v3.md) — зачем всё устроено так.
