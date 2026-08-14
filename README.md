@@ -20,6 +20,16 @@ wiki/    виды      сводки — пересчитываются, рука
 
 ## Первый запуск
 
+Этот репозиторий публичный, и данных в нём нет — только устройство. Ваш склад
+наполнится данными с первого дня, поэтому первым делом он переезжает в свой
+закрытый репозиторий:
+
+```bash
+git clone https://github.com/murad1986/GSWorkHUB.git gsworkhub && cd gsworkhub && rm -rf .git && git init -b master
+```
+
+Дальше — зависимости и проверка:
+
 ```bash
 python3 -m pip install -r requirements.txt && make gates
 ```
