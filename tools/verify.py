@@ -1373,6 +1373,20 @@ def main() -> int:
         else:
             print("✓ чужой код в node_modules не проверяется")
 
+    # Виртуальное окружение python ставится рядом со складом при первой установке
+    # и приносит чужие лицензии в markdown: на свежем клоне гейт краснел двумя
+    # файлами pip, и человек читал это как поломку своей системы.
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        build(root, {"work/people/ivan-petrov.md": OK_NOTE,
+                     ".venv/lib/python3.14/site-packages/pip/LICENSE.md": "лицензия\n",
+                     "venv/lib/site-packages/other/README.md": "[битая](../nope.md)\n"})
+        report = lint.run(root)
+        if report.problems:
+            failures.append(f"НЕ ПОЙМАН: файл из .venv попал в гейт: {report.problems}")
+        else:
+            print("✓ виртуальное окружение python не проверяется")
+
     # Обратная сторона: исключение обязано быть узким, иначе оно прячет наши же ошибки
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)

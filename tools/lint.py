@@ -29,6 +29,9 @@ import yaml
 
 SORTS = ("raw", "work", "wiki")
 RESERVED = {"index.md", "log.md"}   # OKF: навигация и журнал, не содержимое
+# Чужой код рядом со складом: библиотеки узлов и виртуальное окружение python.
+# Их markdown — лицензии и readme зависимостей, а не заметки без сорта.
+VENDOR_DIRS = {"node_modules", ".venv", "venv"}
 
 # Обязательные поля сверх `type` — по типам из docs/storage-schema.md
 REQUIRED = {
@@ -1103,7 +1106,9 @@ def run(root: Path) -> Report:
             continue
         # Чужой код, скачанный инструментами: тысячи README, к складу отношения
         # не имеющие. Без этого одна папка с библиотеками валит весь гейт.
-        if "node_modules" in relative.parts:
+        # Виртуальное окружение python — тот же случай: ставится рядом со
+        # складом при первой установке и приносит чужие лицензии в markdown.
+        if VENDOR_DIRS & set(relative.parts):
             continue
         # Архив сохраняется как было: чужая схема — не наш контракт
         if relative.parts[:2] == ("work", "archive"):
