@@ -26,9 +26,11 @@ make context
 Лог — `~/Library/Logs/GSWorkHUB/context.log`. Проверка вхолостую, без записи и
 без агента: `make context DRY=1`.
 
-Другой агент вместо Codex — переменная `GSWORKHUB_AGENT` (например
-`GSWORKHUB_AGENT=claude`); он должен принимать промпт так же: `<агент> exec
---cd <корень> "<текст>"`.
+Агент запускается так: `codex exec --sandbox workspace-write --cd <корень>
+"<текст промпта>"`. Права на запись нужны, чтобы принесённое легло в
+`raw/inbox/` через приём; каталог ограничен корнем склада, наружу агент не
+пишет по контракту. Другие флаги — переменная `GSWORKHUB_AGENT_ARGS`, другой
+агент — `GSWORKHUB_AGENT` (например `GSWORKHUB_AGENT=claude`).
 
 ## Почему три раза в сутки, а не постоянно
 

@@ -39,7 +39,11 @@ elif [ "$DRY" = "1" ]; then
     say "dry-run: агент $AGENT не запускался"
 else
     say "агент $AGENT собирает контекст по промпту"
-    "$AGENT" exec --cd "$ROOT" "$(cat "$PROMPT")" >>"$LOG" 2>&1 \
+    # Права на запись нужны: агент кладёт принесённое в raw/inbox через приём.
+    # Каталог ограничен корнем склада — наружу он не пишет по контракту.
+    AGENT_ARGS=${GSWORKHUB_AGENT_ARGS:---sandbox workspace-write}
+    # shellcheck disable=SC2086
+    "$AGENT" exec $AGENT_ARGS --cd "$ROOT" "$(cat "$PROMPT")" >>"$LOG" 2>&1 \
         || say "агент завершился с ошибкой — см. лог"
 fi
 
