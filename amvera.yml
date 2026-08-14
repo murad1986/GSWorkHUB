@@ -1,0 +1,14 @@
+meta:
+  environment: docker
+  toolchain:
+    name: docker
+    version: latest
+build:
+  dockerfile: Dockerfile
+  skip: false
+run:
+  # Склад живёт здесь и переживает перезапуски. Всё вне тома теряется.
+  persistenceMount: /data
+  # Одна реплика обязательна: при двух телеграм отдаёт 409 на getUpdates,
+  # а человек получает дубли сообщений.
+  scale: 1

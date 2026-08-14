@@ -1,0 +1,21 @@
+{
+  "name": "excalidraw-render",
+  "private": true,
+  "type": "module",
+  "description": "Заготовка конвейера: .excalidraw -> SVG -> PNG настоящим движком Excalidraw, локально.",
+  "scripts": {
+    "bundle": "esbuild render.mjs --bundle --platform=node --format=esm --outfile=render.build.mjs --external:@resvg/resvg-js --external:jsdom --external:@napi-rs/canvas --log-level=error",
+    "render": "npm run bundle && node render.build.mjs out/scene.excalidraw out/scene.png 2000"
+  },
+  "dependencies": {
+    "@excalidraw/excalidraw": "^0.18.1",
+    "@napi-rs/canvas": "^0.1.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "jsdom": "^24.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "make -s welcome",
+            "timeout": 60,
+            "statusMessage": "Смотрю состояние склада"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+node_modules/
+render.build.mjs
+package-lock.json
+out/*.png
+out/*.svg
+
+__pycache__/
+out/*.pdf
